@@ -11,9 +11,14 @@ public class Solver {
         };
 
         Node root = new Node(puzzle);
+        final long timeStart = System.nanoTime();
         List<Node> solution = Breitensuche(root);
+        final long timeEnd = System.nanoTime();
+        System.out.println("Zeit: "+ (timeEnd-timeStart)+ " Nanosekunden");
+        System.out.println("Pfadkosten: "+solution.size());
+
         if(solution.size()>0){
-            for(int i=0;i<solution.size();i++){
+            for(int i=solution.size()-1;i>=0;i--){
                 solution.get(i).prinzPuzzle();
             }
         }else{
@@ -72,12 +77,11 @@ public class Solver {
     public static void pathTrace(List<Node> path, Node goal){
         System.out.println("Tracing path");
         Node current = goal;
-        current.prinzPuzzle();
         path.add(current);
         while(current.parent != null){
             current = current.parent;
             path.add(current);
-            current.prinzPuzzle();
+
         }
     }
 
