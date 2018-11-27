@@ -9,6 +9,11 @@ public class Node {
     private int x = 0;
     private int col = 3;
 
+    static int[] goal = {
+            1, 2, 3,
+            8, 0, 4,
+            7, 6, 5
+    };
     public Node(int[] p) {
         puzzle = p;
     }
@@ -86,15 +91,58 @@ public class Node {
 
     public boolean goalTest() {
         boolean isGoal = true;
-        int[] goal = {
-                1, 2, 3,
-                8, 0, 4,
-                7, 6, 5
-        };
+        
         if (!this.isSamePuzzle(goal)) isGoal = false;
         return isGoal;
     }
 
+    public int getH(){
+
+        int h=0;
+        int[] from;
+        int[] to;
+        for(int i = 0;i < puzzle.length;i++){
+            from = getPositionInGrid(puzzle[i],puzzle);
+            to = getPositionInGrid(puzzle[i],goal);
+            h += (Math.abs(to[0]-from[0])+Math.abs(to[1]-from[1]));
+        }
+        return h;
+    }
+
+    public int[] getPositionInGrid(int i,int[] grid){
+        int[] xy = {0,0};
+        for(int j=0;j<grid.length;j++){
+            if(grid[j]==i){
+                if(j == 0 || j == 1 || j == 2){
+                    xy[0] = 1;
+                    switch(j){
+                        case 0: xy[1] = 1; break;
+                        case 1: xy[1] = 2; break;
+                        case 2: xy[1] = 3; break;
+                    }
+                }
+                else if(j == 3 || j == 4 || j == 5){
+                    xy[0] = 2;
+                    switch(j){
+                        case 3: xy[1] = 1; break;
+                        case 4: xy[1] = 2; break;
+                        case 5: xy[1] = 3; break;
+                    }
+                }
+                else if(j == 6 || j == 7 || j == 8){
+                    xy[0] = 3;
+                    switch(j){
+                        case 6: xy[1] = 1; break;
+                        case 7: xy[1] = 2; break;
+                        case 8: xy[1] = 3; break;
+                    }
+                }
+                return xy;
+            }
+        }
+        return xy;
+
+    }
     public boolean isSamePuzzle(int[] p) {
         boolean samePuzzle = true;
         for (int i = 0; i < p.length; i++) {
