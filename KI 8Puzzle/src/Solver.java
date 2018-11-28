@@ -64,6 +64,17 @@ public class Solver {
 
             // der einzige unterschied ist, wie man die queue (aka openList) bildet
             switch (algorithm) {
+                case "a*suche":
+                    for(int i = 0;i < currentNode.children.size(); i++){
+                        Node currentchild = currentNode.children.get(i);
+                        if(!contains(openList,currentchild) && !contains(closedList,currentchild)){
+                            for(Node child: openList){
+
+                            }
+                            openList.add(currentchild);
+                        }
+                    }
+                    break;
                 case "breitensuche":
                     //alle children abfangen
                     for (int i = 0; i < currentNode.children.size(); i++) {
