@@ -13,19 +13,25 @@ public class AStarSolver {
 
         Node root = new Node(puzzle);
 
-        List<Node> solutionASS = suche(root, "h1");
+        List<Node> solutionH1 = suche(root, "h1");
 
 
         System.out.println("-- ASTARSEARCH --");
-        printSolution(solutionASS);
+        printSolution(solutionH1);
         System.out.println();
-        logSolution(solutionASS, "ASTARSEARCH");
+        logSolution(solutionH1, "ASTARSEARCH");
 
-        List<Node> solutionASS2 = suche(root, "h2");
+        List<Node> solutionH2 = suche(root, "h2");
         System.out.println("-- ASTARSEARCH2 --");
-        printSolution(solutionASS);
+        printSolution(solutionH2);
         System.out.println();
-        logSolution(solutionASS2, "ASTARSEARCH2");
+        logSolution(solutionH2, "ASTARSEARCH2");
+
+        List<Node> solutionH3 = suche(root, "h3");
+        System.out.println("-- ASTARSEARCH3 --");
+        printSolution(solutionH3);
+        System.out.println();
+        logSolution(solutionH3, "ASTARSEARCH3");
     }
     public static List<Node> suche(Node root, String heuristic) {
         List<Node> pathToSolution = new ArrayList<>();

@@ -119,10 +119,74 @@ public class Node {
                    }
                 }
                 break;
+            case "h3":
+                for(int i = 0;i< puzzle.length;i++){
+                   if(!inRow(i,puzzle[i])){
+                       h++;
+                   }
+                   if(!inCol(i,puzzle[i])){
+                       h++;
+                   }
+                }
         }
         return h;
     }
 
+    public boolean inCol(int i, int search){
+        if(i == 0||i==1||i==2){
+            for (int j = 0;j < 3;j++){
+                if(goal[j] == search){
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if(i == 3||i==4||i==5){
+            for (int j = 3;j < 6;j++){
+                if(goal[j] == search){
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if(i == 6||i==7||i==8){
+            for (int j = 6;j < 9;j++){
+                if(goal[j] == search){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public boolean inRow(int i, int search){
+        if(i == 0||i==3||i==6){
+            for (int j = 0;j < 7;j+=3){
+                if(goal[j] == search){
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if(i == 1||i==4||i==7){
+            for (int j = 1;j < 8;j+=3){
+                if(goal[j] == search){
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if(i == 2||i==5||i==8){
+            for (int j = 2;j < 9;j+=3){
+                if(goal[j] == search){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
 
     public int[] getPositionInGrid(int i,int[] grid){
         int[] xy = {0,0};
