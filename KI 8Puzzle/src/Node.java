@@ -91,10 +91,11 @@ public class Node {
 
     public boolean goalTest() {
         boolean isGoal = true;
-        
+
         if (!this.isSamePuzzle(goal)) isGoal = false;
         return isGoal;
     }
+
 
     public int getH(){
 
@@ -108,6 +109,8 @@ public class Node {
         }
         return h;
     }
+
+
 
     public int[] getPositionInGrid(int i,int[] grid){
         int[] xy = {0,0};
