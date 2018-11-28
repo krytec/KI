@@ -102,7 +102,6 @@ public class Node {
         switch(heuristic){
 
             case "h1":
-
                 int[] from;
                 int[] to;
                 for(int i = 0;i < puzzle.length;i++){

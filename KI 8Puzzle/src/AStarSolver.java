@@ -6,9 +6,9 @@ public class AStarSolver {
     public static void main(String[] args) {
 
         int[] puzzle = {
-                2, 8, 3,
-                1, 6, 4,
-                7, 0, 5
+                1, 2, 3,
+                4, 5, 6,
+                7, 0, 8
         };
 
         Node root = new Node(puzzle);
@@ -32,6 +32,7 @@ public class AStarSolver {
         printSolution(solutionH3);
         System.out.println();
         logSolution(solutionH3, "ASTARSEARCH3");
+
     }
     public static List<Node> suche(Node root, String heuristic) {
         List<Node> pathToSolution = new ArrayList<>();
