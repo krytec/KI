@@ -13,13 +13,21 @@ public class AStarSolver {
 
         Node root = new Node(puzzle);
 
-        List<Node> solutionASS = suche(root, "breitensuche");
+        List<Node> solutionASS = suche(root, "h1");
+
+
         System.out.println("-- ASTARSEARCH --");
         printSolution(solutionASS);
         System.out.println();
         logSolution(solutionASS, "ASTARSEARCH");
+
+        List<Node> solutionASS2 = suche(root, "h2");
+        System.out.println("-- ASTARSEARCH2 --");
+        printSolution(solutionASS);
+        System.out.println();
+        logSolution(solutionASS2, "ASTARSEARCH2");
     }
-    public static List<Node> suche(Node root, String algorithm) {
+    public static List<Node> suche(Node root, String heuristic) {
         List<Node> pathToSolution = new ArrayList<>();
         List<Node> openList = new ArrayList<>();
         List<Node> closedList = new ArrayList<>();
@@ -36,7 +44,7 @@ public class AStarSolver {
                 int lowestf = Integer.MAX_VALUE;
                 currentNode = openList.get(0);
                 for (Node node:openList){
-                    curf = node.getH()+g;
+                    curf = node.getH(heuristic)+g;
                     if(curf < lowestf){
                         currentNode = node;
                         lowestf = curf;
@@ -55,8 +63,8 @@ public class AStarSolver {
                 if(openList.size()!=0){
                     boolean lower = true;
                     for(Node open: openList){
-                        int openf = open.getH()+g;
-                        int successorf = child.getH()+g;
+                        int openf = open.getH(heuristic)+g;
+                        int successorf = child.getH(heuristic)+g;
                         if(openf < successorf){
                             lower = false;
                         }
@@ -67,8 +75,8 @@ public class AStarSolver {
                 }else if(closedList.size()!=0){
                     boolean lower = true;
                     for(Node close: closedList){
-                        int closef = close.getH()+g;
-                        int successorf = child.getH()+g;
+                        int closef = close.getH(heuristic)+g;
+                        int successorf = child.getH(heuristic)+g;
                         if(closef < successorf){
                             lower = false;
                         }

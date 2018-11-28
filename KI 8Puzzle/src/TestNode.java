@@ -15,7 +15,7 @@ public class TestNode {
         };
         Node root = new Node(puzzle);
         int expected = 2;
-        int actual = root.getH();
+        int actual = root.getH("h1");
         assertEquals(expected,actual);
 
 

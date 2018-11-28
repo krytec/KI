@@ -97,19 +97,31 @@ public class Node {
     }
 
 
-    public int getH(){
-
+    public int getH(String heuristic){
         int h=0;
-        int[] from;
-        int[] to;
-        for(int i = 0;i < puzzle.length;i++){
-            from = getPositionInGrid(puzzle[i],puzzle);
-            to = getPositionInGrid(puzzle[i],goal);
-            h += (Math.abs(to[0]-from[0])+Math.abs(to[1]-from[1]));
+        switch(heuristic){
+
+            case "h1":
+
+                int[] from;
+                int[] to;
+                for(int i = 0;i < puzzle.length;i++){
+                    from = getPositionInGrid(puzzle[i],puzzle);
+                    to = getPositionInGrid(puzzle[i],goal);
+                    h += (Math.abs(to[0]-from[0])+Math.abs(to[1]-from[1]));
+                }
+                break;
+
+            case "h2":
+                for(int i = 0;i < puzzle.length;i++){
+                   if(puzzle[i] != goal[i]) {
+                       h++;
+                   }
+                }
+                break;
         }
         return h;
     }
-
 
 
     public int[] getPositionInGrid(int i,int[] grid){
