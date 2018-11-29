@@ -10,9 +10,9 @@ public class Node {
     private int col = 3;
 
     static int[] goal = {
-            1, 2, 3,
-            8, 0, 4,
-            7, 6, 5
+           1,2,3,
+            8,0,4,
+            7,6,5
     };
     public Node(int[] p) {
         puzzle = p;

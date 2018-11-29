@@ -6,9 +6,9 @@ public class AStarSolver {
     public static void main(String[] args) {
 
         int[] puzzle = {
-                1, 2, 3,
-                4, 5, 6,
-                7, 0, 8
+                8,3,5,
+                4,1,6,
+                2,7,0
         };
 
         Node root = new Node(puzzle);
@@ -55,20 +55,21 @@ public class AStarSolver {
                     if(curf < lowestf){
                         currentNode = node;
                         lowestf = curf;
+
                     }
                 }
             }
             openList.remove(currentNode);
             currentNode.expandNode();
-
+            boolean lower;
             for(Node child: currentNode.children){
+                lower = true;
                 if (child.goalTest()) {
                     System.out.println("Goal found!");
                     pathTrace(pathToSolution, child);
                     return pathToSolution;
                 }
                 if(openList.size()!=0){
-                    boolean lower = true;
                     for(Node open: openList){
                         int openf = open.getH(heuristic)+g;
                         int successorf = child.getH(heuristic)+g;
@@ -76,11 +77,8 @@ public class AStarSolver {
                             lower = false;
                         }
                     }
-                    if(lower){
-                        openList.add(child);
-                    }
+
                 }else if(closedList.size()!=0){
-                    boolean lower = true;
                     for(Node close: closedList){
                         int closef = close.getH(heuristic)+g;
                         int successorf = child.getH(heuristic)+g;
@@ -88,11 +86,9 @@ public class AStarSolver {
                             lower = false;
                         }
                     }
-                    if(lower){
-                        openList.add(child);
-                    }
+
                 }
-                else{
+                if(lower){
                     openList.add(child);
                 }
             }

@@ -7,9 +7,9 @@ public class Solver {
     public static void main(String[] args) {
 
         int[] puzzle = {
-                2, 8, 3,
-                1, 6, 4,
-                7, 0, 5
+                3,0,7,
+                2,8,1,
+                6,4,5
         };
 
         Node root = new Node(puzzle);
