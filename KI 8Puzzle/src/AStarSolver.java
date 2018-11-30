@@ -1,4 +1,3 @@
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,147 +5,86 @@ public class AStarSolver {
     public static void main(String[] args) {
 
         int[] puzzle = {
-                8,3,5,
-                4,1,6,
-                2,7,0
+                2, 8, 3,
+                1, 6, 4,
+                7, 0, 5
         };
 
         Node root = new Node(puzzle);
 
         List<Node> solutionH1 = suche(root, "h1");
-
-
-        System.out.println("-- ASTARSEARCH --");
-        printSolution(solutionH1);
+        System.out.println("-- A* SEARCH H1 --");
+        Solver.printSolution(solutionH1);
         System.out.println();
-        logSolution(solutionH1, "ASTARSEARCH");
+        Solver.logSolution(solutionH1, "ASTARSEARCH_H1");
 
         List<Node> solutionH2 = suche(root, "h2");
-        System.out.println("-- ASTARSEARCH2 --");
-        printSolution(solutionH2);
+        System.out.println("-- A* SEARCH H2 --");
+        Solver.printSolution(solutionH2);
         System.out.println();
-        logSolution(solutionH2, "ASTARSEARCH2");
+        Solver.logSolution(solutionH2, "ASTARSEARCH_H2");
 
         List<Node> solutionH3 = suche(root, "h3");
-        System.out.println("-- ASTARSEARCH3 --");
-        printSolution(solutionH3);
+        System.out.println("-- A* SEARCH H3 --");
+        Solver.printSolution(solutionH3);
         System.out.println();
-        logSolution(solutionH3, "ASTARSEARCH3");
-
+        Solver.logSolution(solutionH3, "ASTARSEARCH_H3");
     }
+
+    /**
+     * A*-Suche mit hilfe einer einfachen Queue
+     *
+     * @param root      - Anfangsknoten
+     * @param heuristic - Name der Heuristik als String
+     * @return List<Node> - Lösungsweg
+     */
     public static List<Node> suche(Node root, String heuristic) {
         List<Node> pathToSolution = new ArrayList<>();
         List<Node> openList = new ArrayList<>();
-        List<Node> closedList = new ArrayList<>();
-        int g = 0;
+
         openList.add(root);
 
-        //Solange noch knoten da sind suchen wir
+        // solange noch Knoten da sind suchen wir
         while (!openList.isEmpty()) {
-            Node currentNode;
-            if(openList.size()==1){
-                currentNode = openList.get(0);
-            }else{
-                int curf;
-                int lowestf = Integer.MAX_VALUE;
-                currentNode = openList.get(0);
-                for (Node node:openList){
-                    curf = node.getH(heuristic)+g;
-                    if(curf < lowestf){
-                        currentNode = node;
-                        lowestf = curf;
+            Node currentNode = openList.get(0);
 
+            // den Knoten mit dem geringsten F-Wert wählen
+            if (openList.size() > 1) {
+                int lowestF = Integer.MAX_VALUE;
+                for (Node node : openList) {
+                    int currentF = node.getH(heuristic) + node.getG();
+                    if (currentF < lowestF) {
+                        currentNode = node;
+                        lowestF = currentF;
                     }
                 }
             }
+
+            // schauen, ob wir bereits den Zielknoten erreicht haben (zB wenn root schon das Ziel ist)
+            if (currentNode.goalTest()) {
+                System.out.println("Goal found!");
+                Solver.pathTrace(pathToSolution, currentNode);
+                return pathToSolution;
+            }
+
             openList.remove(currentNode);
             currentNode.expandNode();
-            boolean lower;
-            for(Node child: currentNode.children){
-                lower = true;
-                if (child.goalTest()) {
+
+            // alle Kinder durchlaufen und der Queue hinzufügen
+            for (int i = currentNode.children.size() - 1; i >= 0; i--) {
+                Node currentChild = currentNode.children.get(i);
+
+                // schauen, ob wir den Zielknoten erreicht haben
+                if (currentChild.goalTest()) {
                     System.out.println("Goal found!");
-                    pathTrace(pathToSolution, child);
+                    Solver.pathTrace(pathToSolution, currentChild);
                     return pathToSolution;
                 }
-                if(openList.size()!=0){
-                    for(Node open: openList){
-                        int openf = open.getH(heuristic)+g;
-                        int successorf = child.getH(heuristic)+g;
-                        if(openf < successorf){
-                            lower = false;
-                        }
-                    }
 
-                }else if(closedList.size()!=0){
-                    for(Node close: closedList){
-                        int closef = close.getH(heuristic)+g;
-                        int successorf = child.getH(heuristic)+g;
-                        if(closef < successorf){
-                            lower = false;
-                        }
-                    }
-
-                }
-                if(lower){
-                    openList.add(child);
-                }
+                openList.add(0, currentChild);
             }
-            closedList.add(currentNode);
-            g++;
         }
+
         return pathToSolution;
-    }
-
-    //rückwärts die parents durchgehen
-    public static void pathTrace(List<Node> path, Node goal) {
-        System.out.println("Tracing path\n");
-        Node current = goal;
-        path.add(current);
-        while (current.parent != null) {
-            current = current.parent;
-            path.add(current);
-        }
-    }
-
-    public static boolean contains(List<Node> a, Node b) {
-        boolean contains = false;
-        for (int i = 0; i < a.size(); i++) {
-            if (a.get(i).isSamePuzzle(b.puzzle)) {
-                contains = true;
-                return contains;
-            }
-        }
-        return contains;
-    }
-
-    public static void printSolution(List<Node> solution) {
-        if (solution.size() > 0) {
-            for (int i = solution.size() - 1; i >= 0; i--) {
-                System.out.print(solution.get(i).toString());
-            }
-            System.out.println("\n" + solution.size() + " Schritt(e)\n");
-        } else {
-            System.out.println("No path found");
-        }
-    }
-
-    public static void logSolution(List<Node> solution, String algorithm) {
-        try {
-            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(algorithm + ".txt"), "utf-8"));
-            writer.write("Lösung mit " + algorithm + ":\n");
-            if (solution.size() > 0) {
-                for (int i = solution.size() - 1; i >= 0; i--) {
-                    writer.append(solution.get(i).toString());
-                }
-                writer.append("\n" + solution.size() + " Schritt(e)\n");
-            } else {
-                writer.append("No path found");
-            }
-
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

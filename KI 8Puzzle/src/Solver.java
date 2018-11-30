@@ -7,9 +7,9 @@ public class Solver {
     public static void main(String[] args) {
 
         int[] puzzle = {
-                3,0,7,
-                2,8,1,
-                6,4,5
+                2, 8, 3,
+                1, 6, 4,
+                7, 0, 5
         };
 
         Node root = new Node(puzzle);
@@ -22,16 +22,14 @@ public class Solver {
         System.out.println();
         logSolution(solutionBFS, "Breitensuche");
 
-
         System.out.println("-- TIEFENSUCHE --");
         printSolution(solutionDFS);
         System.out.println();
         logSolution(solutionDFS, "Tiefensuche");
     }
 
-
     /**
-     * Simple Breitensuche und Tiefensuche mit hilfe einer einfachen queue
+     * Breitensuche und Tiefensuche mit hilfe einer einfachen Queue
      *
      * @param root      - Anfangsknoten
      * @param algorithm - Name des Algorithmus als String
@@ -44,10 +42,10 @@ public class Solver {
 
         openList.add(root);
 
-        //Solange noch knoten da sind suchen wir
+        // solange noch knoten da sind suchen wir
         while (!openList.isEmpty()) {
 
-            //abarbeiten des obersten knotens
+            // abarbeiten des obersten knotens
             Node currentNode = openList.get(0);
             closedList.add(currentNode);
             openList.remove(0);
@@ -59,7 +57,7 @@ public class Solver {
                 return pathToSolution;
             }
 
-            //alle richtungen gehen
+            // alle richtungen gehen
             currentNode.expandNode();
 
             // der einzige unterschied ist, wie man die queue (aka openList) bildet
@@ -103,7 +101,13 @@ public class Solver {
         return pathToSolution;
     }
 
-    //rückwärts die parents durchgehen
+    /**
+     * Bildet eine Liste mit einem Lösungsweg, indem alle Ancestor-Knoten
+     * des übergebenen Knotens rückwärts durchgegangen werden.
+     *
+     * @param path - Liste, in der der Lösungsweg gespeichert werden soll.
+     * @param goal - Start-Knoten.
+     */
     public static void pathTrace(List<Node> path, Node goal) {
         System.out.println("Tracing path\n");
         Node current = goal;
@@ -114,6 +118,13 @@ public class Solver {
         }
     }
 
+    /**
+     * Überprüft, ob eine Liste von Knoten einen bestimmten Knoten enthält.
+     *
+     * @param a - eine Liste von Knoten.
+     * @param b - ein Knoten.
+     * @return true, wenn die Liste von Knoten den mitgegebenen Knoten enthält. Ansonsten false.
+     */
     public static boolean contains(List<Node> a, Node b) {
         boolean contains = false;
         for (int i = 0; i < a.size(); i++) {
@@ -125,6 +136,11 @@ public class Solver {
         return contains;
     }
 
+    /**
+     * Gibt einen Lösungsweg in Textform aus.
+     *
+     * @param solution - eine Liste von Knoten, die einen Lösungsweg repräsentieren.
+     */
     public static void printSolution(List<Node> solution) {
         if (solution.size() > 0) {
             for (int i = solution.size() - 1; i >= 0; i--) {
@@ -136,6 +152,12 @@ public class Solver {
         }
     }
 
+    /**
+     * Speichert einen Lösungsweg in eine .txt-Datei.
+     *
+     * @param solution  - eine Liste von Knoten, die einen Lösungsweg repräsentieren.
+     * @param algorithm - der Name des verwendeten Algorithmus.
+     */
     public static void logSolution(List<Node> solution, String algorithm) {
         try {
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(algorithm + ".txt"), "utf-8"));
