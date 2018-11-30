@@ -13,10 +13,18 @@ Sg = {(1,2,3,8,0,4,7,6,5)}
 sg = (1,2,3,8,0,4,7,6,5)
 
 ## 4. Menge von Operatoren:
-UP: x-3, wo x auf einem Intervall von Position 4 bis Position 9 in der Anordnung liegt. Mögliche Positionen von x: (...,...,...,x,x,x,x,x,x)
-DOWN: x+3, wo x auf einem Intervall von Position 1 bis Position 6 in der Anordnung liegt. Mögliche Positionen von x: (x,x,x,x,x,x,....,...,...)
-LEFT: x-1, wo x nicht auf Positionen 1, 4, 7 in der Anordnung liegt. Mögliche Positionen von x: (...,x,x,...,x,x,...,x,x)
-RIGHT: x+1, wo x nicht auf Positionen 3, 6, 9 in der Anordnung liegt. Mögliche Positionen von x: (x,x,...,x,x,...,x,x,...)
+
+* UP: x-3, wo x auf einem Intervall von Position 4 bis Position 9 in der Anordnung liegt.
+Mögliche Positionen von x: (...,...,...,x,x,x,x,x,x)
+
+* DOWN: x+3, wo x auf einem Intervall von Position 1 bis Position 6 in der Anordnung liegt.
+Mögliche Positionen von x: (x,x,x,x,x,x,....,...,...)
+
+* LEFT: x-1, wo x nicht auf Positionen 1, 4, 7 in der Anordnung liegt.
+Mögliche Positionen von x: (...,x,x,...,x,x,...,x,x)
+
+* RIGHT: x+1, wo x nicht auf Positionen 3, 6, 9 in der Anordnung liegt.
+Mögliche Positionen von x: (x,x,...,x,x,...,x,x,...)
 
 ## 5. Pfadkostenfunktion:
 Uniforme Kosten - g(UP)=1, g(DOWN)=1, g(LEFT)=1, g(RIGHT)=1.
