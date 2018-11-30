@@ -27,4 +27,4 @@ Mögliche Positionen von x: (...,x,x,...,x,x,...,x,x)
 Mögliche Positionen von x: (x,x,...,x,x,...,x,x,...)
 
 ### 5. Pfadkostenfunktion:
-Uniforme Kosten - g(UP)=1, g(DOWN)=1, g(LEFT)=1, g(RIGHT)=1.
+Uniforme Kosten: g(UP)=1, g(DOWN)=1, g(LEFT)=1, g(RIGHT)=1.
