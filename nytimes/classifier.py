@@ -96,17 +96,17 @@ class DocumentClassifier:
             for i,x in v.items():
                 wordsinlabels[k][i]= x/len(wordsinlabels[k])
         #print(wordsinlabels)
-        # plabels ={}
-        #
-        # for k,v in labels.items():
-        #     if v in plabels.keys():
-        #         plabels[v] += 1
-        #     else:
-        #         plabels[v] = 1
-        # for k,v in plabels.items():
-        #     plabels[k] /= len(features)
-        #
-        # print(plabels)
+        plabels ={}
+
+        for k,v in labels.items():
+            if v in plabels.keys():
+                plabels[v] += 1
+            else:
+                plabels[v] = 1
+        for k,v in plabels.items():
+            plabels[k] /= len(features)
+
+        print(plabels)
         #raise NotImplementedError()
         # FIXME: implement
 
