@@ -4,6 +4,7 @@
 from preprocess_documents import read_and_preprocess_documents
 import sys
 import argparse
+import pickle
 
 """
 
@@ -31,7 +32,12 @@ class DocumentClassifier:
             in this 'model' object. Pick whatever form seems appropriate
             to you. Recommendation: use 'pickle' to store/load objects! """
         self.model = None
-        # FIXME: implement
+
+    def save(self, file):
+        pickle.dump(self.model, open(str(file)+'.p', 'wb'))
+
+    def load(self, file):
+        self.model = pickle.load(open(str(file)+'.p', 'rb'))
 
     def train(self, features, labels):
         """
@@ -76,25 +82,59 @@ class DocumentClassifier:
         #         count += word
         #     words[k]=count
 
+        # dictionary that contains probability of each category P(C)
+        category_probability = {}
+        for k, v in labels.items():
+            if v not in category_probability.keys():
+                category_probability[v] = len([x for x in labels.keys() if labels[x] == v]) / len(labels)
 
-        #dictionary that cointains all words per article category
+        print('\n=== P(Kategorie) ===')
+        for k, v in category_probability.items():
+            print(k, v)
+        print()
+
+        # dictionary that contains the number of occurences of each word per article category
         wordsinlabels = {}
-        for k,v in labels.items(): #k=text1:v=arts
-            for a,x in features.items(): #a=text1 x={word:count}
-                if(a == k):
+        for k, v in labels.items():  # k=text1:v=arts
+            for a, x in features.items():  # a=text1 x={word:count}
+                if a == k:
                     for word in x.keys():
-                        if(v in wordsinlabels.keys()):
-                            if(word in wordsinlabels[v]):
-                                wordsinlabels[v][word] += x[word]
+                        if v in wordsinlabels.keys():
+                            if word in wordsinlabels[v]:
+                                wordsinlabels[v][word] += 1
                             else:
-                                wordsinlabels[v].update({word:x[word]})
+                                wordsinlabels[v].update({word: 1})
                         else:
-                            wordsinlabels[v] = {word:x[word]}
+                            wordsinlabels[v] = {word: 1}
 
-        #percentage for every word in the article
+        # dictionary of probabilities for each word in a certain category P(Xi|C)
+        word_in_category_probability = {}
+        for k, v in wordsinlabels.items():
+            for x, y in v.items():
+                if x in word_in_category_probability.keys():
+                    word_in_category_probability[x].update({k: y / len([x for x in labels if labels[x] == k])})
+                else:
+                    word_in_category_probability[x] = {k: y / len([x for x in labels if labels[x] == k])}
+
+        print('\n=== P(Wort|Kategorie) ===')
+        for k in list(word_in_category_probability)[:30]:
+            for x, y in word_in_category_probability[k].items():
+                print('P(' + str(k) + '|' + str(x) + ') = ' + str(y))
+        print()
+
+        self.model = category_probability, word_in_category_probability
+
+
+
+        # mehr brauchen wir noch nicht, denke ich
+        ####################################################################
+
+
+
+        # percentage for every word in the article
         for k,v in wordsinlabels.items():
             for i,x in v.items():
-                wordsinlabels[k][i]= x/len(wordsinlabels[k])
+                wordsinlabels[k][i] = x/len(wordsinlabels[k])
         #print(wordsinlabels)
         #wahrscheinlichkeit mit der ein artikel eine bestimmte kategorie ist
         plabels ={}
@@ -107,7 +147,7 @@ class DocumentClassifier:
         for k,v in plabels.items():
             plabels[k] /= len(features)
 
-        print(plabels)
+        #print(plabels)
         # saves the % how often a word is connected to an article p(w/c) = p(c)*p(c/w)
         pwlabels = {}
         for k,v in wordsinlabels.items():
@@ -116,7 +156,7 @@ class DocumentClassifier:
                     pwlabels[i].update({k:wordsinlabels[k][i] * plabels[k]})
                 else:
                     pwlabels[i] = {k:wordsinlabels[k][i] * plabels[k]}
-        print(pwlabels)
+        #print(pwlabels)
         #raise NotImplementedError()
         # FIXME: implement
 
@@ -213,6 +253,9 @@ if __name__ == "__main__":
     # the 'test' folder
     if args.apply:
         result = classifier.apply(features)
+
+    classifier.save('Classifier')
+    classifier.load('Classifier')
 
     # FIXME: measure error rate on 'test' folder
 
