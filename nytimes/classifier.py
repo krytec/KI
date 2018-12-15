@@ -108,6 +108,15 @@ class DocumentClassifier:
             plabels[k] /= len(features)
 
         print(plabels)
+        # saves the % how often a word is connected to an article p(w/c) = p(c)*p(c/w)
+        pwlabels = {}
+        for k,v in wordsinlabels.items():
+            for i,x in v.items():
+                if i in pwlabels.keys():
+                    pwlabels[i].update({k:wordsinlabels[k][i] * plabels[k]})
+                else:
+                    pwlabels[i] = {k:wordsinlabels[k][i] * plabels[k]}
+        print(pwlabels)
         #raise NotImplementedError()
         # FIXME: implement
 
