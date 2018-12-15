@@ -96,6 +96,7 @@ class DocumentClassifier:
             for i,x in v.items():
                 wordsinlabels[k][i]= x/len(wordsinlabels[k])
         #print(wordsinlabels)
+        #wahrscheinlichkeit mit der ein artikel eine bestimmte kategorie ist
         plabels ={}
 
         for k,v in labels.items():
