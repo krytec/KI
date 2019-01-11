@@ -2,7 +2,7 @@
 # -*- coding: iso-8859-1 -*-
 
 from preprocess_documents import read_and_preprocess_documents
-import sys
+import os
 import argparse
 import pickle
 
@@ -39,7 +39,7 @@ class DocumentClassifier:
     def load(self, file):
         self.model = pickle.load(open(str(file)+'.p', 'rb'))
 
-    def train(self, features, labels):
+    def train(self, features, labels, wordmap):
         """
         trains a document classifier and stores all relevant
         information in 'self.model'.
@@ -122,43 +122,8 @@ class DocumentClassifier:
                 print('P(' + str(k) + '|' + str(x) + ') = ' + str(y))
         print()
 
-        self.model = category_probability, word_in_category_probability
+        self.model = category_probability, word_in_category_probability, wordmap
 
-
-
-        # mehr brauchen wir noch nicht, denke ich
-        ####################################################################
-
-
-
-        # percentage for every word in the article
-        for k,v in wordsinlabels.items():
-            for i,x in v.items():
-                wordsinlabels[k][i] = x/len(wordsinlabels[k])
-        #print(wordsinlabels)
-        #wahrscheinlichkeit mit der ein artikel eine bestimmte kategorie ist
-        plabels ={}
-
-        for k,v in labels.items():
-            if v in plabels.keys():
-                plabels[v] += 1
-            else:
-                plabels[v] = 1
-        for k,v in plabels.items():
-            plabels[k] /= len(features)
-
-        #print(plabels)
-        # saves the % how often a word is connected to an article p(w/c) = p(c)*p(c/w)
-        pwlabels = {}
-        for k,v in wordsinlabels.items():
-            for i,x in v.items():
-                if i in pwlabels.keys():
-                    pwlabels[i].update({k:wordsinlabels[k][i] * plabels[k]})
-                else:
-                    pwlabels[i] = {k:wordsinlabels[k][i] * plabels[k]}
-        #print(pwlabels)
-        #raise NotImplementedError()
-        # FIXME: implement
 
     def apply(self, features):
         """
@@ -207,7 +172,7 @@ class NaiveBayesClassifier(DocumentClassifier):
         # FIXME: implement (Exercise 03)
         raise NotImplementedError()
 
-    def train(self, features, labels):
+    def train(self, features, labels, wordmap):
         # FIXME: implement (Exercise 03)
         raise NotImplementedError()
 
@@ -230,7 +195,13 @@ if __name__ == "__main__":
 
     # reads and preprocesses the documents listed as commandline arguments.
     # You can use the resulting features for classification.
-    wordmap,features = read_and_preprocess_documents(args.documents)
+    if os.path.exists('cache.p'):
+        with open('cache.p', 'rb') as stream:
+            wordmap, features = pickle.load(stream)
+    else:
+        wordmap, features = read_and_preprocess_documents(args.documents)
+        with open('cache.p', 'wb') as stream:
+            pickle.dump((wordmap, features), stream)
 
     # estimate class labels ('arts', 'business', 'dining', ...)
     # from directory names
@@ -247,7 +218,7 @@ if __name__ == "__main__":
     #  train classifier on 'features' and 'labels'
     # (using documents from the 'train' folder)
     if args.train:
-        classifier.train(features, labels)
+        classifier.train(features, labels, wordmap)
 
     # apply the classifier to documents from
     # the 'test' folder
