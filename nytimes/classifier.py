@@ -196,7 +196,8 @@ class DocumentClassifier:
                     max_probability = probability
 
             article_category_dict[doc_name] = category_with_highest_probability
-            print(str(doc_name) + ' - ' + str(category_with_highest_probability))
+            print('ASSIGNED PROBABILITY: ' + str(doc_name) + ' - ' + str(category_with_highest_probability))
+            print('---------------------------------------------------------------------------------------')
 
         return article_category_dict
 
