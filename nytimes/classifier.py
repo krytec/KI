@@ -3,6 +3,8 @@
 
 from preprocess_documents import read_and_preprocess_documents
 import os
+import sys
+import math
 import argparse
 import pickle
 
@@ -124,7 +126,6 @@ class DocumentClassifier:
 
         self.model = category_probability, word_in_category_probability, wordmap
 
-
     def apply(self, features):
         """
         applies a classifier to a set of documents. Requires the classifier
@@ -162,8 +163,42 @@ class DocumentClassifier:
                    ...
                  }
         """
-        raise NotImplementedError()
-        # FIXME: implement
+        article_category_dict = {}
+        category_probability = self.model[0]
+        word_in_category_probability = self.model[1]
+
+        print('\n=== Ergebnisse ===')
+
+        for doc_name, content in features.items():
+
+            category_with_highest_probability = None
+            max_probability = 0
+
+            for cat, prob in category_probability.items():
+
+                print('\nCATEGORY: ' + str(cat))
+
+                probability = prob * 100000  # P(Kategorie), keine Ahnung, wie und wo man log verwenden sollte,
+                                             # es funkt einfach nicht und die Zahlen sind zu klein
+
+                for word, cat_prob_dict in word_in_category_probability.items():  # Aufmultiplizieren
+                    if cat in cat_prob_dict.keys():
+                        if word in content.keys():  # wenn das Wort im Artikel enthalten ist
+                            probability *= cat_prob_dict[cat] # normale Wahrscheinlichkeit P(Wort|Kategorie)
+                        else:
+                            probability *= 1 - cat_prob_dict[cat]  # Gegenwahrscheinlichkeit 1-P(Wort|Kategorie)
+
+                print('PROBABILITY OF ' + str(cat) + ' : ' + str(probability))
+                print('MAX_PROB: ' + str(max_probability))
+
+                if category_with_highest_probability is None or probability >= max_probability:
+                    category_with_highest_probability = cat
+                    max_probability = probability
+
+            article_category_dict[doc_name] = category_with_highest_probability
+            print(str(doc_name) + ' - ' + str(category_with_highest_probability))
+
+        return article_category_dict
 
 
 class NaiveBayesClassifier(DocumentClassifier):
@@ -219,14 +254,13 @@ if __name__ == "__main__":
     # (using documents from the 'train' folder)
     if args.train:
         classifier.train(features, labels, wordmap)
+        classifier.save('Classifier')
 
     # apply the classifier to documents from
     # the 'test' folder
-    if args.apply:
+    if args.apply and os.path.exists('Classifier.p'):
+        classifier.load('Classifier')
         result = classifier.apply(features)
-
-    classifier.save('Classifier')
-    classifier.load('Classifier')
 
     # FIXME: measure error rate on 'test' folder
 
