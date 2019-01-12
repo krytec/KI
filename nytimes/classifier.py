@@ -178,7 +178,7 @@ class DocumentClassifier:
 
                 print('\nCATEGORY: ' + str(cat))
 
-                probability = prob * 100000  # P(Kategorie), keine Ahnung, wie und wo man log verwenden sollte,
+                probability = prob*1000000  # P(Kategorie), keine Ahnung, wie und wo man log verwenden sollte,
                                              # es funkt einfach nicht und die Zahlen sind zu klein
 
                 for word, cat_prob_dict in word_in_category_probability.items():  # Aufmultiplizieren
@@ -198,7 +198,6 @@ class DocumentClassifier:
             article_category_dict[doc_name] = category_with_highest_probability
             print('ASSIGNED PROBABILITY: ' + str(doc_name) + ' - ' + str(category_with_highest_probability))
             print('---------------------------------------------------------------------------------------')
-
         return article_category_dict
 
 
@@ -262,6 +261,9 @@ if __name__ == "__main__":
     if args.apply and os.path.exists('Classifier.p'):
         classifier.load('Classifier')
         result = classifier.apply(features)
-
-    # FIXME: measure error rate on 'test' folder
-
+        # Failure measuring
+        me = 0
+        for article in result:
+            if labels[article] != result[article]:
+                me+=1
+        print(me/len(result.keys()))
