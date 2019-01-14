@@ -26,7 +26,7 @@ import pickle
 
 """
 
-
+epsilon=0.00001
 class DocumentClassifier:
 
     def __init__(self):
@@ -100,28 +100,34 @@ class DocumentClassifier:
         for k, v in labels.items():  # k=text1:v=arts
             for a, x in features.items():  # a=text1 x={word:count}
                 if a == k:
-                    for word in x.keys():
-                        if v in wordsinlabels.keys():
+                    for word in x:
+                        if v in wordsinlabels:
                             if word in wordsinlabels[v]:
                                 wordsinlabels[v][word] += 1
                             else:
                                 wordsinlabels[v].update({word: 1})
                         else:
                             wordsinlabels[v] = {word: 1}
-
         # dictionary of probabilities for each word in a certain category P(Xi|C)
         word_in_category_probability = {}
         for k, v in wordsinlabels.items():
             for x, y in v.items():
-                if x in word_in_category_probability.keys():
+                if x in word_in_category_probability:
                     word_in_category_probability[x].update({k: y / len([x for x in labels if labels[x] == k])})
                 else:
                     word_in_category_probability[x] = {k: y / len([x for x in labels if labels[x] == k])}
 
+        #FIX for measure error rate: We had to add every categorie propability to a word, if the word was not found in the category
+        #we needed to give the word an epsilon propability for that categorie which is != 0
+        for word in word_in_category_probability:
+            for label in category_probability:
+                if label not in word_in_category_probability[word]:
+                    word_in_category_probability[word].update({label:epsilon})
+
         print('\n=== P(Wort|Kategorie) ===')
         for k in list(word_in_category_probability)[:30]:
             for x, y in word_in_category_probability[k].items():
-                print('P(' + str(k) + '|' + str(x) + ') = ' + str(y))
+                print("P(" + str(k) + '|' + str(x) + ') = ' + str(y))
         print()
 
         self.model = category_probability, word_in_category_probability, wordmap
@@ -178,16 +184,17 @@ class DocumentClassifier:
 
                 print('\nCATEGORY: ' + str(cat))
 
-                probability = prob*1000000  # P(Kategorie), keine Ahnung, wie und wo man log verwenden sollte,
+                probability = 0  # P(Kategorie), keine Ahnung, wie und wo man log verwenden sollte,
                                              # es funkt einfach nicht und die Zahlen sind zu klein
 
                 for word, cat_prob_dict in word_in_category_probability.items():  # Aufmultiplizieren
-                    if cat in cat_prob_dict.keys():
-                        if word in content.keys():  # wenn das Wort im Artikel enthalten ist
-                            probability *= cat_prob_dict[cat] # normale Wahrscheinlichkeit P(Wort|Kategorie)
+                    if cat in cat_prob_dict:
+                        if word in content:  # wenn das Wort im Artikel enthalten ist
+                            probability += math.log(cat_prob_dict[cat]) # normale Wahrscheinlichkeit P(Wort|Kategorie)
                         else:
-                            probability *= 1 - cat_prob_dict[cat]  # Gegenwahrscheinlichkeit 1-P(Wort|Kategorie)
+                            probability += math.log(1 - cat_prob_dict[cat])  # Gegenwahrscheinlichkeit 1-P(Wort|Kategorie)
 
+                probability += math.log(prob)
                 print('PROBABILITY OF ' + str(cat) + ' : ' + str(probability))
                 print('MAX_PROB: ' + str(max_probability))
 
